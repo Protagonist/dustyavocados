@@ -7,7 +7,13 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.order(:rating).select(:rating).map(&:rating).uniq
+    @checked_ratings = check
+    @checked_ratings.each do |rating|
+      params[rating] = true
+    end
+      @movies = Movie.order(params[:sort])
+      @movies = @movies.where(:rating => @checked_ratings)
   end
 
   def new
@@ -38,8 +44,17 @@ class MoviesController < ApplicationController
     redirect_to movies_path
   end
 
-      def movie_params
-        params.require(:movie).permit(:title, :rating, :description, :release_date, :timestamps)
+  private
+  def check
+    if params[:ratings]
+      params[:ratings].keys
+    else
+      @all_ratings
     end
+  end
+     
+   def movie_params
+        params.require(:movie).permit(:title, :rating, :description, :release_date, :timestamps)
+   end
 
 end
