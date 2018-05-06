@@ -5,8 +5,14 @@ Rails.application.routes.draw do
 
   get 'home/show'
 
-  resources :movies   
-  root :to => redirect('/movies')
+  get 'reviews/new'
+
+  get 'reviews/create'
+
+  resources :movies do
+    resources :reviews
+  end
+  
 
   get 'auth/:provider/callback', to: 'sessions#create'
   get 'auth/failure', to: redirect('/')
@@ -15,7 +21,7 @@ Rails.application.routes.draw do
   resources :sessions, only: [:create, :destroy]
   resource :home, only: [:show]
 
-  root to: "home#show"
+  root :to => redirect('/movies')
 
 
 
